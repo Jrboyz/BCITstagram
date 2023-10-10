@@ -9,7 +9,7 @@
  */
 
 const unzipper = require("unzipper"),
-  fs = require("fs").promises,
+  fs = require("fs"),
   PNG = require("pngjs").PNG,
   path = require("path");
 
@@ -21,8 +21,16 @@ const unzipper = require("unzipper"),
  * @return {promise}
 */
 const unzip = (pathIn, pathOut) => {
-  return fs.createReadStream(path)
-      .pipe(unzipper.Extract({ path: pathOut}));
+  return new Promise((resolve, reject) => {
+    fs.createReadStream(pathIn)
+      .pipe(unzipper.Extract({ path: pathOut}))
+      .on('error', (err) => {
+        reject(err)
+      })
+      .on("end", () => {
+        resolve ("Success");
+      });
+  })
 };
 
 /**
@@ -32,7 +40,7 @@ const unzip = (pathIn, pathOut) => {
  * @return {promise}
  */
 const readDir = (dir) => {
-
+  pass;
 };
 
 /**
@@ -44,7 +52,10 @@ const readDir = (dir) => {
  * @return {promise}
  */
 const grayScale = (pathIn, pathOut) => {
-
+  // Read each png file...
+  //fs.createReadStream("png1.png")
+    // .on("data", (chunk) => console.log(chunk))
+  pass;
 };
 
 module.exports = {
@@ -52,9 +63,3 @@ module.exports = {
   readDir,
   grayScale,
 };
-
-
-
-// Read each png file...
-fs.createReadStream("png1.png")
-    .on("data", (chunk) => console.log(chunk))

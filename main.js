@@ -14,6 +14,10 @@ const zipFilePath = path.join(__dirname, "myfile.zip");
 const pathUnzipped = path.join(__dirname, "unzipped");
 const pathProcessed = path.join(__dirname, "grayscaled");
 
-unzip(zipFilePath, pathUnzipped);
-
-// Use promise.all to run all greyscaling at the same time
+IOhandler.unzip(zipFilePath, pathUnzipped)
+    .then(() => IOhandler.readDir(pathUnzipped))
+    .then((dirData) => IOhandler.grayScale(dirData, pathProcessed))
+    .catch((err) => {
+        console.log("An Error has Occurred");
+    })
+// Use promise.all to run all greyscaling at
