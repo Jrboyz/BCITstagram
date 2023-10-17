@@ -81,11 +81,9 @@ const grayScale = (pathIn, pathOut) => {
 
         fs.writeFile(pathOut, data, (err) => {
           if (err) {
-            console.error(err);
             reject(err);
           }
           else {
-            console.log("Success");
             resolve("Success");
           }
         });

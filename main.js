@@ -13,19 +13,23 @@ const IOhandler = require("./IOhandler");
 const zipFilePath = path.join(__dirname, "myfile.zip");
 const pathUnzipped = path.join(__dirname, "unzipped");
 const pathProcessed = path.join(__dirname, "grayscaled");
+const fs = require("fs");
+
+if (!fs.existsSync(pathProcessed)) {
+    fs.mkdirSync(pathProcessed, { recursive: true });
+}
 
 IOhandler.unzip(zipFilePath, pathUnzipped)
     .then(() => IOhandler.readDir(pathUnzipped))
     .then((dirData) => {
         const filterPromises = dirData.map((imagePath, index) => {
             const outputPath = path.join(pathProcessed, `gs_${index}.png`);
-            return IOhandler.grayScale(imagePath, outputPath); // Use grayScale with correct parameters
+            return IOhandler.grayScale(imagePath, outputPath); 
         });
-
         return Promise.all(filterPromises);
     })
     .then(() => {
-        console.log("Image processing and saving complete.");
+        console.log("Image processing complete.");
     })
     .catch((err) => {
         console.log("An Error has Occurred:", err);
