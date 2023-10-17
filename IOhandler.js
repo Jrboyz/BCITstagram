@@ -28,10 +28,12 @@ const unzip = (pathIn, pathOut) => {
         reject(err)
       })
       .on("end", () => {
+        console.log("Extraction operation complete")
         resolve ("Success");
       });
   })
 };
+
 
 /**
  * Description: read all the png files from given directory and return Promise containing array of each png file path
@@ -40,7 +42,18 @@ const unzip = (pathIn, pathOut) => {
  * @return {promise}
  */
 const readDir = (dir) => {
-  pass;
+  return new Promise((resolve, reject) => {
+    fs.readdir(dir, (err, files) => {
+      if (err) {
+        reject(err);
+      }
+      else {
+        const pngFiles = files.filter((file) => path.extname(file).toLowerCase() === '.png');
+        const filePaths = pngFiles.map((file) => path.join(dir, file));
+        resolve(filePaths);
+      }
+    })
+  })
 };
 
 /**
@@ -52,11 +65,35 @@ const readDir = (dir) => {
  * @return {promise}
  */
 const grayScale = (pathIn, pathOut) => {
-  // Read each png file...
-  //fs.createReadStream("png1.png")
-    // .on("data", (chunk) => console.log(chunk))
-  pass;
+  return new Promise((resolve, reject) => {
+    fs.readFile(pathIn, (err, data) => {
+      if (err) {
+        reject(err);
+      }
+      else {
+        for (let i = 0; i < data.length; i += 4) {
+          const red = data[i];
+          const green = data[i+1];
+          const blue = data[i+2];
+          const grayscale = Math.round(0.2989 * red + 0.5870 * green + 0.1140 * blue);
+          data[i] = data[i+1] = data[i+2] = grayscale;
+        }
+
+        fs.writeFile(pathOut, data, (err) => {
+          if (err) {
+            console.error(err);
+            reject(err);
+          }
+          else {
+            console.log("Success");
+            resolve("Success");
+          }
+        });
+      }
+    });
+  });
 };
+
 
 module.exports = {
   unzip,

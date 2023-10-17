@@ -16,8 +16,17 @@ const pathProcessed = path.join(__dirname, "grayscaled");
 
 IOhandler.unzip(zipFilePath, pathUnzipped)
     .then(() => IOhandler.readDir(pathUnzipped))
-    .then((dirData) => IOhandler.grayScale(dirData, pathProcessed))
-    .catch((err) => {
-        console.log("An Error has Occurred");
+    .then((dirData) => {
+        const filterPromises = dirData.map((imagePath, index) => {
+            const outputPath = path.join(pathProcessed, `gs_${index}.png`);
+            return IOhandler.grayScale(imagePath, outputPath); // Use grayScale with correct parameters
+        });
+
+        return Promise.all(filterPromises);
     })
-// Use promise.all to run all greyscaling at
+    .then(() => {
+        console.log("Image processing and saving complete.");
+    })
+    .catch((err) => {
+        console.log("An Error has Occurred:", err);
+    });
